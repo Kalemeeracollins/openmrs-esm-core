@@ -9,8 +9,8 @@ const { name, peerDependencies } = require(path.resolve(root, "package.json"));
 
 module.exports = {
   entry: {
-    // helloWorldPage: './src/helloWorldPage.tsx'
-    [name]: "systemjs-webpack-interop/auto-public-path",
+    [name]: "./src/helloWorldPage.tsx",
+    // [name]: "systemjs-webpack-interop/auto-public-path",
   },
   output: {
     filename: "[name].js",
@@ -18,7 +18,7 @@ module.exports = {
     publicPath: "",
     library: {
       type: "system",
-      name,
+      // name,
     },
   },
   target: "web",

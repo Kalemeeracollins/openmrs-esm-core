@@ -2,26 +2,33 @@ import "import-map-overrides";
 import "systemjs/dist/system";
 import "systemjs/dist/extras/amd";
 import "systemjs/dist/extras/named-exports";
-import "systemjs/dist/extras/named-register";
+// import "systemjs/dist/extras/named-register";
 import "systemjs/dist/extras/use-default";
 import type { ModuleResolver } from "./types";
 
 /**
- * Loads all provided modules by their name. Performs a
- * SystemJS import.
- * @param modules The names of the modules to resolve.
+ * Uses SystemJS to import all the modules by their URL.
+ *
+ * @param modules Module names for keys, URLs for values
+ * @returns A tuple [name, moduleContents]
  */
-export function loadModules(modules: Array<string>) {
+export function loadModules(modules: Record<string, string>) {
   return Promise.all(
-    modules.map((name) =>
-      System.import(name).then(
+    Object.entries(modules).map(([name, url]) =>
+      System.import(url).then(
         async (value): Promise<[string, System.Module]> => {
+          console.log(name, url, value);
           // first check if this is a new module-type -> then we have a remote-entry first
           if ("init" in value && "get" in value) {
             await __webpack_init_sharing__("default");
-            await value.init(__webpack_share_scopes__.default);
+            try {
+              await value.init(__webpack_share_scopes__.default);
+            } catch (e) {
+              console.log("caught error", e);
+            }
             const factory = await value.get("app");
             const newValue = factory();
+            console.log("got value for", name, newValue);
             return [name, newValue];
           }
 
@@ -29,7 +36,7 @@ export function loadModules(modules: Array<string>) {
           return [name, value];
         },
         (error): [string, System.Module] => {
-          console.error("Failed to load module", name, error);
+          console.error("Failed to load module", name, "from url", url, error);
           return [name, {}];
         }
       )

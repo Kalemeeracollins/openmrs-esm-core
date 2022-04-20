@@ -1,3 +1,4 @@
+import "systemjs-webpack-interop/auto-public-path";
 import ForkTsCheckerWebpackPlugin from "fork-ts-checker-webpack-plugin";
 import { resolve, dirname, basename } from "path";
 import { CleanWebpackPlugin } from "clean-webpack-plugin";
@@ -107,7 +108,7 @@ export default (
 
   const baseConfig = {
     entry: {
-      [name]: "systemjs-webpack-interop/auto-public-path",
+      [name]: srcFile,
     },
     output: {
       libraryTarget: "system",
@@ -175,7 +176,7 @@ export default (
       }),
       new ModuleFederationPlugin({
         name,
-        library: { type: "system", name },
+        library: { type: "system" },
         filename,
         exposes: {
           app: srcFile,

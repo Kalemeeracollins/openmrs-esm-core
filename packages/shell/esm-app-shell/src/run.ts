@@ -33,31 +33,14 @@ import { sharedDependencies } from "./dependencies";
 import { loadModules, registerModules } from "./system";
 import { appName, getCoreExtensions } from "./ui";
 
-const allowedSuffixes = ["-app", "-widgets"];
-
-/**
- * Gets the frontend modules (apps). These are entries
- * in the import maps that end with "-app".
- * @param maps The value of the "imports" property of the
- * import maps.
- */
-function getApps(maps: Record<string, string>) {
-  return Object.keys(maps).filter((m) =>
-    allowedSuffixes.some((n) => m.endsWith(n))
-  );
-}
-
 /**
  * Loads the frontend modules (apps and widgets). Should be done *after*
- * the import maps initialized, i.e., after modules loaded.
- *
- * By convention we call frontend modules registering activation functions
- * apps, and all others widgets. This is not enforced technically.
+ * the framework is initialized.
  */
 function loadApps() {
   return window.importMapOverrides
     .getCurrentPageMap()
-    .then((importMap) => loadModules(getApps(importMap.imports)));
+    .then((importMap) => loadModules(importMap.imports));
 }
 
 /**
@@ -320,7 +303,7 @@ export function run(configUrls: Array<string>, offline: boolean) {
   subscribeNotificationShown(showNotification);
   subscribeToastShown(showToast);
   subscribePrecacheStaticDependencies(precacheGlobalStaticDependencies);
-  registerModules(sharedDependencies);
+  // registerModules(sharedDependencies);
   setupApiModule();
   registerCoreExtensions();
 
