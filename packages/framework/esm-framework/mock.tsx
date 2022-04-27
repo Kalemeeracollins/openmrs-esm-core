@@ -292,6 +292,8 @@ export const useVisit = jest.fn().mockReturnValue({
 
 export const useVisitTypes = jest.fn(() => []);
 
+export const age = jest.fn();
+
 /* esm-styleguide */
 
 export const showNotification = jest.fn();
