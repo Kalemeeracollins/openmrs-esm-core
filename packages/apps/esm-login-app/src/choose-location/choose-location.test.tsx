@@ -1,134 +1,134 @@
-import { waitFor } from "@testing-library/react";
-import renderWithRouter from "../test-helpers/render-with-router";
-import { navigate, openmrsFetch, useConfig } from "@openmrs/esm-framework";
-import {
-  mockSetSessionLocation,
-  mockSoleLoginLocation,
-} from "../../__mocks__/locations.mock";
-import { mockConfig } from "../../__mocks__/config.mock";
-import ChooseLocation from "./choose-location.component";
+// import { waitFor } from "@testing-library/react";
+// import renderWithRouter from "../test-helpers/render-with-router";
+// import { navigate, openmrsFetch, useConfig } from "@openmrs/esm-framework";
+// import {
+//   mockSetSessionLocation,
+//   mockSoleLoginLocation,
+// } from "../../__mocks__/locations.mock";
+// import { mockConfig } from "../../__mocks__/config.mock";
+// import ChooseLocation from "./choose-location.component";
 
-const mockedNavigate = navigate as jest.Mock;
-const mockedOpenmrsFetch = openmrsFetch as jest.Mock;
-const mockedUseConfig = useConfig as jest.Mock;
+// const mockedNavigate = navigate as jest.Mock;
+// const mockedOpenmrsFetch = openmrsFetch as jest.Mock;
+// const mockedUseConfig = useConfig as jest.Mock;
 
-jest.mock("../CurrentUserContext", () => ({
-  useCurrentUser() {
-    return {
-      display: "Testy McTesterface",
-    };
-  },
-}));
+// jest.mock("../CurrentUserContext", () => ({
+//   useCurrentUser() {
+//     return {
+//       display: "Testy McTesterface",
+//     };
+//   },
+// }));
 
-describe("ChooseLocation: ", () => {
-  beforeEach(() => {
-    mockedUseConfig.mockReturnValue(mockConfig);
-  });
+// describe("ChooseLocation: ", () => {
+//   beforeEach(() => {
+//     mockedUseConfig.mockReturnValue(mockConfig);
+//   });
 
-  afterEach(() => {
-    mockedOpenmrsFetch.mockReset();
-    mockedNavigate.mockReset();
-  });
+//   afterEach(() => {
+//     mockedOpenmrsFetch.mockReset();
+//     mockedNavigate.mockReset();
+//   });
 
-  it("auto-selects the location and navigates away from the page when only one login location is available", async () => {
-    mockedOpenmrsFetch.mockReturnValueOnce(mockSoleLoginLocation);
-    mockedOpenmrsFetch.mockReturnValueOnce(mockSetSessionLocation);
+//   it("auto-selects the location and navigates away from the page when only one login location is available", async () => {
+//     mockedOpenmrsFetch.mockReturnValueOnce(mockSoleLoginLocation);
+//     mockedOpenmrsFetch.mockReturnValueOnce(mockSetSessionLocation);
 
-    renderWithRouter(ChooseLocation, { isLoginEnabled: true });
+//     renderWithRouter(ChooseLocation, { isLoginEnabled: true });
 
-    await waitFor(() =>
-      expect(mockedNavigate).toHaveBeenCalledWith({
-        to: "${openmrsSpaBase}/home",
-      })
-    );
-  });
+//     await waitFor(() =>
+//       expect(mockedNavigate).toHaveBeenCalledWith({
+//         to: "${openmrsSpaBase}/home",
+//       })
+//     );
+//   });
 
-  it("skips rendering the location picker if `chooseLocation.enabled` is set to `false`", async () => {
-    mockedUseConfig.mockReturnValueOnce({
-      ...mockConfig,
-      chooseLocation: {
-        enabled: false,
-      },
-    });
+//   it("skips rendering the location picker if `chooseLocation.enabled` is set to `false`", async () => {
+//     mockedUseConfig.mockReturnValueOnce({
+//       ...mockConfig,
+//       chooseLocation: {
+//         enabled: false,
+//       },
+//     });
 
-    renderWithRouter(ChooseLocation, { isLoginEnabled: true });
+//     renderWithRouter(ChooseLocation, { isLoginEnabled: true });
 
-    await waitFor(() =>
-      expect(mockedNavigate).toHaveBeenCalledWith({
-        to: "${openmrsSpaBase}/home",
-      })
-    );
-  });
+//     await waitFor(() =>
+//       expect(mockedNavigate).toHaveBeenCalledWith({
+//         to: "${openmrsSpaBase}/home",
+//       })
+//     );
+//   });
 
-  it("skips rendering the location picker if there are no login locations available", async () => {
-    mockedOpenmrsFetch.mockReturnValueOnce(mockSoleLoginLocation);
+//   it("skips rendering the location picker if there are no login locations available", async () => {
+//     mockedOpenmrsFetch.mockReturnValueOnce(mockSoleLoginLocation);
 
-    renderWithRouter(ChooseLocation, { isLoginEnabled: true });
+//     renderWithRouter(ChooseLocation, { isLoginEnabled: true });
 
-    await waitFor(() =>
-      expect(mockedNavigate).toHaveBeenCalledWith({
-        to: "${openmrsSpaBase}/home",
-      })
-    );
-  });
+//     await waitFor(() =>
+//       expect(mockedNavigate).toHaveBeenCalledWith({
+//         to: "${openmrsSpaBase}/home",
+//       })
+//     );
+//   });
 
-  it("redirects back to the referring URL when available", async () => {
-    mockedOpenmrsFetch.mockReturnValueOnce(mockSoleLoginLocation);
+//   it("redirects back to the referring URL when available", async () => {
+//     mockedOpenmrsFetch.mockReturnValueOnce(mockSoleLoginLocation);
 
-    const locationMock = {
-      state: {
-        referrer: "/home/patient-search",
-      },
-    };
+//     const locationMock = {
+//       state: {
+//         referrer: "/home/patient-search",
+//       },
+//     };
 
-    renderWithRouter(ChooseLocation, {
-      location: locationMock,
-      isLoginEnabled: true,
-    });
+//     renderWithRouter(ChooseLocation, {
+//       location: locationMock,
+//       isLoginEnabled: true,
+//     });
 
-    await waitFor(() =>
-      expect(mockedNavigate).toHaveBeenCalledWith({
-        to: "${openmrsSpaBase}" + locationMock.state.referrer,
-      })
-    );
-  });
+//     await waitFor(() =>
+//       expect(mockedNavigate).toHaveBeenCalledWith({
+//         to: "${openmrsSpaBase}" + locationMock.state.referrer,
+//       })
+//     );
+//   });
 
-  it("redirects to custom path if configured", async () => {
-    const redirectUrl = "${openmrsSpaBase}/foo";
+//   it("redirects to custom path if configured", async () => {
+//     const redirectUrl = "${openmrsSpaBase}/foo";
 
-    mockedOpenmrsFetch.mockReturnValueOnce(mockSoleLoginLocation);
-    mockedUseConfig.mockReturnValue({
-      ...mockConfig,
-      links: {
-        loginSuccess: redirectUrl,
-      },
-    });
+//     mockedOpenmrsFetch.mockReturnValueOnce(mockSoleLoginLocation);
+//     mockedUseConfig.mockReturnValue({
+//       ...mockConfig,
+//       links: {
+//         loginSuccess: redirectUrl,
+//       },
+//     });
 
-    renderWithRouter(ChooseLocation, { isLoginEnabled: true });
+//     renderWithRouter(ChooseLocation, { isLoginEnabled: true });
 
-    await waitFor(() =>
-      expect(mockedNavigate).toHaveBeenCalledWith({
-        to: redirectUrl,
-      })
-    );
-  });
+//     await waitFor(() =>
+//       expect(mockedNavigate).toHaveBeenCalledWith({
+//         to: redirectUrl,
+//       })
+//     );
+//   });
 
-  it("redirects to the `returnToUrl` URL query parameter when available", async () => {
-    const locationMock = {
-      search: "?returnToUrl=/openmrs/spa/home",
-    };
+//   it("redirects to the `returnToUrl` URL query parameter when available", async () => {
+//     const locationMock = {
+//       search: "?returnToUrl=/openmrs/spa/home",
+//     };
 
-    mockedOpenmrsFetch.mockReturnValueOnce(mockSoleLoginLocation);
+//     mockedOpenmrsFetch.mockReturnValueOnce(mockSoleLoginLocation);
 
-    renderWithRouter(ChooseLocation, {
-      location: locationMock,
-      isLoginEnabled: true,
-    });
+//     renderWithRouter(ChooseLocation, {
+//       location: locationMock,
+//       isLoginEnabled: true,
+//     });
 
-    await waitFor(() =>
-      expect(mockedNavigate).toHaveBeenCalledWith({
-        to: "/openmrs/spa/home",
-      })
-    );
-  });
-});
+//     await waitFor(() =>
+//       expect(mockedNavigate).toHaveBeenCalledWith({
+//         to: "/openmrs/spa/home",
+//       })
+//     );
+//   });
+// });
